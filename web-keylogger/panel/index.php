@@ -1,0 +1,1 @@
+<?php return header('Location: https://google.com');

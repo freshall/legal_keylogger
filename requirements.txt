@@ -1,0 +1,6 @@
+
+requests
+hashlib
+keyboard
+PyQt5
+psutil
