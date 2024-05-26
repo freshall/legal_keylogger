@@ -179,7 +179,7 @@ if ($_POST["method"] == "auth")
             }
         }
     }
-} else if ($_POST["method"] == "active") 
+} else if ($_POST["method"] == "getactive") 
 {
     if (!isset($_POST["username"])) 
     {
@@ -202,6 +202,45 @@ if ($_POST["method"] == "auth")
     {
         
         echo (($userinfo['active']));
+        //$array = array('Status' => 'Successful standart user');
+        //echo encryptRequest(json_encode($array));
+        die();
+    }
+    else if ($user == $_POST["username"] && $userinfo["admin"] == 1) 
+    {
+        $array = array('Status' => 'Error', 'msg' => 'Username is admin');
+        echo (json_encode($array));
+        die();
+    }
+    else 
+    {
+        $array = array('Status' => 'Error', 'msg' => 'Username error');
+        echo encryptRequest(json_encode($array));
+        die();
+    }
+} else if ($_POST["method"] == "setactive") 
+{
+    if (!isset($_POST["username"]) || !isset($_POST["active"]))
+    {
+        die();
+    }
+
+    if ($_POST["username"] == "") 
+    {
+        $array = array('Status' => 'Error', 'msg' => 'Username is empty');
+        echo encryptRequest(json_encode($array));
+        die();
+    }
+
+    $user = getUserName($_POST["username"]);
+    $userinfo = getUserInfo($user);
+    
+    
+    //password and user exists -> let's to login
+    if ($user == $_POST["username"] && $userinfo["admin"] == 0) 
+    {
+        
+        setActive($_POST["username"], $_POST["active"]);
         //$array = array('Status' => 'Successful standart user');
         //echo encryptRequest(json_encode($array));
         die();

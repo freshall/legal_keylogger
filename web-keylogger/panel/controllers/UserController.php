@@ -88,6 +88,16 @@ function setIp($username)
    mysqli_query($db, $query);
 }
 
+function setActive($username, $active)
+{
+   global $db;
+
+   $user = fix_string($username);
+
+   $query = "UPDATE `users` SET `active` = '{$active}' WHERE `username` = '{$user}'";
+   mysqli_query($db, $query);
+}
+
 function createNewLog($username, $application, $application_title, $event_log)
 {
    global $db;
@@ -103,6 +113,7 @@ function createNewLog($username, $application, $application_title, $event_log)
 
    return mysqli_query($db, $query);
 }
+
 
 
 function getAllLogs($username)
