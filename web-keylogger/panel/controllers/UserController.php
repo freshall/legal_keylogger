@@ -98,22 +98,39 @@ function setActive($username, $active)
    mysqli_query($db, $query);
 }
 
-function createNewLog($username, $application, $application_title, $event_log)
+function createNewLog($username, $application_exe, $application_title, $event_log)
 {
    global $db;
 
    $date = date("Y-m-d H:i:s");
    $username_sec = fix_string($username);
-   $application_sec = fix_string($application);
+   $application_exe_sec = fix_string($application_exe);
    $application_title_sec = fix_string($application_title);
    $event_log_sec = fix_string($event_log);
    $event_log_sec_json = json_encode($event_log_sec, JSON_UNESCAPED_UNICODE);
 
-   $query = "INSERT INTO `logs` (`username`, `application`, `application_title`, `event_log`, `created_at`) VALUES ('{$username_sec}', '{$application_sec}', '{$application_title_sec}', '{$event_log_sec_json}', '{$date}')";
+   $query = "INSERT INTO `logs` (`username`, `application_exe`, `application_title`, `event_log`, `created_at`) VALUES ('{$username_sec}', '{$application_exe_sec}', '{$application_title_sec}', '{$event_log_sec_json}', '{$date}')";
 
    return mysqli_query($db, $query);
 }
 
+function getApplicationLogs($username, $application_exe, $application_title)
+{
+   global $db;
+   
+   $user = fix_string($username);
+   $app = fix_string($application_exe);
+   $app_title = fix_string($application_title);
+   $query = "SELECT * FROM `logs` WHERE `username` = '{$user}' AND `application_exe` = '{$app}' AND `application_title` = '{$app_title}' ORDER BY `id` ASC";
+
+   $result = mysqli_query($db, $query);
+
+   $array = array();
+   while ($row = mysqli_fetch_assoc($result)) {
+       $array[] = $row;
+   }
+   return $array;
+}
 
 
 function getAllLogs($username)
@@ -125,6 +142,26 @@ function getAllLogs($username)
 
    $result = mysqli_query($db, $query);
 
+   while ($row = mysqli_fetch_assoc($result)) {
+      $array[] = $row;
+   }
+   return $array;
+}
+
+function getAllApplicationLogs($username)
+{
+   global $db;
+   
+   $user = fix_string($username);
+   $query = "SELECT application_exe, MAX(created_at) as last_press, application_title
+             FROM logs 
+             WHERE username = '{$user}' 
+             GROUP BY application_exe, application_title 
+             ORDER BY last_press DESC";
+
+   $result = mysqli_query($db, $query);
+
+   $array = array();
    while ($row = mysqli_fetch_assoc($result)) {
       $array[] = $row;
    }
