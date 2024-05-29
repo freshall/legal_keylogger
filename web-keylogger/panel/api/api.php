@@ -145,7 +145,7 @@ if ($_POST["method"] == "auth")
         {
             foreach ($logsArray as $logs) 
             {
-                $responseArray[] = (array('created_at' => $logs['created_at'], 'event_log' => $logs['event_log']));
+                $responseArray[] =  (array('created_at' => $logs['created_at'], 'event_log' => $logs['event_log']));
             }
             echo encryptRequest(json_encode($responseArray));
         }

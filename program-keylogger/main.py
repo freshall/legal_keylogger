@@ -10,10 +10,15 @@ import psutil
 import threading
 
 from server import *
-#from keylogger import *
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QSystemTrayIcon, QMenu, QAction, QGraphicsView, QGraphicsScene, QGraphicsEllipseItem
+
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+# Импортируем скомпилированный ресурсный модуль
+import resources_rc
 
 window_title = ""
 process_name = ""
@@ -579,7 +584,7 @@ class c_MainWindow(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
   
-        self.setWindowIcon(QtGui.QIcon(".\logo.png"))
+        self.setWindowIcon(QtGui.QIcon(":/logo.png"))
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("SecureKey Monitor")
         # Остальные виджеты
         self.stacked_widget = QtWidgets.QStackedWidget()
