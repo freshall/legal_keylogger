@@ -58,16 +58,14 @@ if ($_POST["method"] == "auth")
     if ($user == $_POST["username"] && $userinfo["admin"] == 0) 
     {
         $logsArray = getAllLogs($user);
-        $logs = [];
         
         if (is_array($logsArray)) {
             foreach ($logsArray as $log) 
             {
-                $logs[] = $log['event_log'];
+                $allLogs[] = (array('event_log' => $log['event_log']));
             }
+            echo encryptRequest(json_encode($allLogs));
         }
-
-        echo encryptRequest(implode("\n", $logs));
         die();
     }
     else if ($user == $_POST["username"] && $userinfo["admin"] == 1) 
@@ -177,8 +175,8 @@ if ($_POST["method"] == "auth")
                 $users[] = $user['username'];
             }
         }
+        echo encryptRequest(implode("\n", $users));
     }
-    echo encryptRequest(implode("\n", $users));
     die();
     
 } else if ($_POST["method"] == "getactive") 

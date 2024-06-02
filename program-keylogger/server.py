@@ -19,15 +19,15 @@ class c_server:
 
         try:
             response = requests.post(url, data=data, headers=headers)
+
             #response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
             result = ""
 
             try:
                 result = json.loads(c_server.decryptResponse(response.content))
             except json.JSONDecodeError as e:
-                showerror(title="Ошибка", message=f"JSON invalid result: {result}, Error: {e}")
-                print(f"Ignoring invalid log: {result}, Error: {e}")
-
+                showerror(title="Ошибка", message=f"Error auth result: {result}, Error: {e}")
+                print(f"Error auth: {result}, Error: {e}")
             
             if result["Status"] == "Successful standart user":
                 return "Successful standart user"
@@ -93,18 +93,15 @@ class c_server:
             if "000webhost.com" in response.text: # fix for free shit hosting
                 return False
 
-            logs = decrypted_response.split('\n')  # Разделить логи по символу новой строки
-            decrypted_logs = []
-            for log in logs:
-                log = log.strip()
-                if log:  # Проверяем, что строка не пустая
-                    try:
-                        decrypted_logs.append(json.loads(log))
-                    except json.JSONDecodeError as e:
-                        showerror(title="Ошибка", message=f"Ignoring invalid log: {log}, Error: {e}") #TODO
-                        print(f"Ignoring invalid log: {log}, Error: {e}")
-        
-            return decrypted_logs
+            decrypted_text_json_data = ""
+            if decrypted_response != "" and not "000webhost.com" in response.text: 
+                try:
+                    decrypted_text_json_data = json.loads(decrypted_response)
+                    return decrypted_text_json_data
+                except json.JSONDecodeError as e:
+                    showerror(title="Ошибка", message=f"getLogs invalid log: {decrypted_text_json_data}, Error: {e}")
+                    print(f"getLogs invalid log: {decrypted_text_json_data}, Error: {e}")
+            return False
         except requests.exceptions.RequestException as e:
             showerror(title="Ошибка", message=f"{e}")
             print(f"Error sending message to server: {e}")
@@ -132,8 +129,8 @@ class c_server:
                     decrypted_text_json_data = json.loads(decrypted_text_data)
                     return decrypted_text_json_data
                 except json.JSONDecodeError as e:
-                    showerror(title="Ошибка", message=f"Ignoring invalid log: {decrypted_text_json_data}, Error: {e}")
-                    print(f"Ignoring invalid log: {decrypted_text_json_data}, Error: {e}")
+                    showerror(title="Ошибка", message=f"getApplicationLogsByClick invalid log: {decrypted_text_json_data}, Error: {e}")
+                    print(f"getApplicationLogsByClick invalid log: {decrypted_text_json_data}, Error: {e}")
             return False
         except requests.exceptions.RequestException as e:
             showerror(title="Ошибка", message=f"{e}")
@@ -162,8 +159,8 @@ class c_server:
                     decrypted_text_json_data = json.loads(decrypted_text_data)
                     return decrypted_text_json_data
                 except json.JSONDecodeError as e:
-                    showerror(title="Ошибка", message=f"Ignoring invalid log: {decrypted_text_json_data}, Error: {e}")
-                    print(f"Ignoring invalid log: {decrypted_text_json_data}, Error: {e}")
+                    showerror(title="Ошибка", message=f"getApplicationLogs invalid log: {decrypted_text_json_data}, Error: {e}")
+                    print(f"getApplicationLogs invalid log: {decrypted_text_json_data}, Error: {e}")
             
             return False
         except requests.exceptions.RequestException as e:

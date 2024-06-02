@@ -15,7 +15,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QSystemTrayIcon, QMenu, QAction, QGraphicsView, QGraphicsScene, QGraphicsEllipseItem
 
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning) # Сделал для того чтобы не писало в консоль warn о классах и logo.png
 
 # Импортируем скомпилированный ресурсный модуль
 import resources_rc
@@ -357,11 +357,12 @@ class c_AdminUI(QtWidgets.QWidget):
         """)
         self.UsersList.setObjectName("UsersList")
         self.UsersList.setGeometry(QtCore.QRect(0, 29, 190, 589))  # Set position (x, y) and size (width, height)
-        
+
         users = c_server.getAllUsers()
-        for user in users:
-            item = QtWidgets.QListWidgetItem(user)
-            self.UsersList.addItem(item)
+        if users != False:
+            for user in users:
+                item = QtWidgets.QListWidgetItem(user)
+                self.UsersList.addItem(item)
         
         self.UsersList.itemClicked.connect(self.onUserClicked)
         
@@ -522,7 +523,7 @@ class c_AdminUI(QtWidgets.QWidget):
     def updateTreeWidgetLogs(self):
         self.applicationList.clear()
         logs = c_server.getApplicationLogs(self.currentUser)
-        if logs:
+        if logs != False:
             # Примерно преобразуем данные, чтобы добавить дату и время и т.д...
             for log in logs:
                 date_time = log.get('last_press', '')
@@ -545,11 +546,12 @@ class c_AdminUI(QtWidgets.QWidget):
         logs = c_server.getApplicationLogsByClick(self.currentUser, application, application_title)  # Получаем логи для данного приложения
         
         logs_text = ""
-        for log in logs:
-            message = log.get('event_log', '')
-            message = pattern.sub(lambda x: replacements[x.group()], message)
-            message = message.strip('"')
-            logs_text += message
+        if logs != False:
+            for log in logs:
+                message = log.get('event_log', '')
+                message = pattern.sub(lambda x: replacements[x.group()], message)
+                message = message.strip('"')
+                logs_text += message
 
         self.logsList.setPlainText(logs_text)  # Записываем логи в текстовое поле
 
@@ -566,16 +568,13 @@ class c_AdminUI(QtWidgets.QWidget):
         # Получаем логи для выбранного пользователя
         logs = c_server.getLogs(self.currentUser)
 
-        updated_logs = []  # Создаем новый список для обновленных логов
-
-        for log in logs:
-            if isinstance(log, str):
-                updated_log = pattern.sub(lambda x: replacements[x.group()], log)
-            elif isinstance(log, dict):
-                updated_log = {key: pattern.sub(lambda x: replacements[x.group()], value) if isinstance(value, str) else value for key, value in log.items()}
-            updated_logs.append(updated_log)
-
-        logs_text = ''.join(map(str, updated_logs))
+        logs_text = ""
+        if logs != False:
+            for log in logs:
+                message = log.get('event_log', '')
+                message = pattern.sub(lambda x: replacements[x.group()], message)
+                message = message.strip('"')
+                logs_text += message
 
         #Добавляем логи в logsList
         self.logsList.setPlainText(logs_text)
