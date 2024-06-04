@@ -1,5 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+    <file>show.png</file>
+    <file>hide.png</file>
     <file>logo.png</file>
 </qresource>
 </RCC>

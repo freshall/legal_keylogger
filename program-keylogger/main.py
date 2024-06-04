@@ -260,7 +260,7 @@ class c_LoginUI(QtWidgets.QWidget):
 
         self.show_password_button = QtWidgets.QPushButton(self.centralwidget)
         self.show_password_button.setGeometry(QtCore.QRect(510, 245, 40, 40))
-        self.show_password_button.setIcon(QtGui.QIcon(".\show.png"))
+        self.show_password_button.setIcon(QtGui.QIcon(":/show.png"))
         self.show_password_button.setCheckable(True)
         self.show_password_button.setFlat(True)
         self.show_password_button.setStyleSheet("background: none; border: none;")
@@ -292,10 +292,10 @@ class c_LoginUI(QtWidgets.QWidget):
     def toggle_password_visibility(self, checked):
         if checked:
             self.PasswordText.setEchoMode(QtWidgets.QLineEdit.Normal)
-            self.show_password_button.setIcon(QtGui.QIcon(".\show.png"))
+            self.show_password_button.setIcon(QtGui.QIcon(":/show.png"))
         else:
             self.PasswordText.setEchoMode(QtWidgets.QLineEdit.Password)
-            self.show_password_button.setIcon(QtGui.QIcon(".\hide.png"))
+            self.show_password_button.setIcon(QtGui.QIcon(":/hide.png"))
     
 class c_AdminUI(QtWidgets.QWidget):
     def __init__(self, MainWindow):
@@ -359,7 +359,7 @@ class c_AdminUI(QtWidgets.QWidget):
         self.UsersList.setGeometry(QtCore.QRect(0, 29, 190, 589))  # Set position (x, y) and size (width, height)
 
         users = c_server.getAllUsers()
-        if users != False:
+        if users:
             for user in users:
                 item = QtWidgets.QListWidgetItem(user)
                 self.UsersList.addItem(item)
@@ -523,7 +523,7 @@ class c_AdminUI(QtWidgets.QWidget):
     def updateTreeWidgetLogs(self):
         self.applicationList.clear()
         logs = c_server.getApplicationLogs(self.currentUser)
-        if logs != False:
+        if logs:
             # Примерно преобразуем данные, чтобы добавить дату и время и т.д...
             for log in logs:
                 date_time = log.get('last_press', '')
@@ -546,7 +546,7 @@ class c_AdminUI(QtWidgets.QWidget):
         logs = c_server.getApplicationLogsByClick(self.currentUser, application, application_title)  # Получаем логи для данного приложения
         
         logs_text = ""
-        if logs != False:
+        if logs:
             for log in logs:
                 message = log.get('event_log', '')
                 message = pattern.sub(lambda x: replacements[x.group()], message)
@@ -569,7 +569,7 @@ class c_AdminUI(QtWidgets.QWidget):
         logs = c_server.getLogs(self.currentUser)
 
         logs_text = ""
-        if logs != False:
+        if logs:
             for log in logs:
                 message = log.get('event_log', '')
                 message = pattern.sub(lambda x: replacements[x.group()], message)

@@ -37,11 +37,11 @@ class c_server:
                 error_message = result["msg"]
                 showerror(title="Ошибка", message=f"{error_message}")
                 print(f"Error: {error_message}") # Incorrect user or password / Enter the username and password
-            return False
+            return result
         except requests.exceptions.RequestException as e:
             showerror(title="Ошибка", message=f"{e}")
             print(f"Error sending message to server: {e}")
-            return False
+            return result
 
     def getAllUsers():
         url = f'http://{servername}/panel/api/api.php'
@@ -58,21 +58,20 @@ class c_server:
 
             # Парсим строку, полученную от сервера
             users_data = c_server.decryptResponse(response.content)
+
+            usernames = ""
  
             if "000webhost.com" in response.text: # fix for free shit hosting
-                return False
+                return usernames
             
             # Убираем перенос и разбиваем строку на отдельные имена
             usernames = [name.strip('\n') for name in users_data.split('\n') if name.strip()]
-            
-            # Формируем строку с разделителем "\n" для удобного вывода
-            formatted_user_list = "\n".join(usernames)
             
             return usernames
         except requests.exceptions.RequestException as e:
             showerror(title="Ошибка", message=f"{e}")
             print(f"Error sending message to server: {e}")
-            return False
+            return usernames
 
     def getLogs(item):
         url = f'http://{servername}/panel/api/api.php'
@@ -90,10 +89,10 @@ class c_server:
 
             decrypted_response = c_server.decryptResponse(response.content)  # Расшифровываем полученные данные
 
-            if "000webhost.com" in response.text: # fix for free shit hosting
-                return False
-
             decrypted_text_json_data = ""
+            if "000webhost.com" in response.text: # fix for free shit hosting
+                return decrypted_text_json_data
+
             if decrypted_response != "" and not "000webhost.com" in response.text: 
                 try:
                     decrypted_text_json_data = json.loads(decrypted_response)
@@ -101,11 +100,11 @@ class c_server:
                 except json.JSONDecodeError as e:
                     showerror(title="Ошибка", message=f"getLogs invalid log: {decrypted_text_json_data}, Error: {e}")
                     print(f"getLogs invalid log: {decrypted_text_json_data}, Error: {e}")
-            return False
+            return decrypted_text_json_data
         except requests.exceptions.RequestException as e:
             showerror(title="Ошибка", message=f"{e}")
             print(f"Error sending message to server: {e}")
-            return False    
+            return decrypted_text_json_data    
 
     def getApplicationLogsByClick(username, application, application_title):
         url = f'http://{servername}/panel/api/api.php'
@@ -131,11 +130,11 @@ class c_server:
                 except json.JSONDecodeError as e:
                     showerror(title="Ошибка", message=f"getApplicationLogsByClick invalid log: {decrypted_text_json_data}, Error: {e}")
                     print(f"getApplicationLogsByClick invalid log: {decrypted_text_json_data}, Error: {e}")
-            return False
+            return decrypted_text_json_data
         except requests.exceptions.RequestException as e:
             showerror(title="Ошибка", message=f"{e}")
             print(f"Error sending message to server: {e}")
-            return False
+            return decrypted_text_json_data
 
     def getApplicationLogs(item):
         url = f'http://{servername}/panel/api/api.php'
@@ -162,11 +161,11 @@ class c_server:
                     showerror(title="Ошибка", message=f"getApplicationLogs invalid log: {decrypted_text_json_data}, Error: {e}")
                     print(f"getApplicationLogs invalid log: {decrypted_text_json_data}, Error: {e}")
             
-            return False
+            return decrypted_text_json_data
         except requests.exceptions.RequestException as e:
             showerror(title="Ошибка", message=f"{e}")
             print(f"Error sending message to server: {e}")
-            return False    
+            return decrypted_text_json_data    
 
     def getCurrentActive(item):
         url = f'http://{servername}/panel/api/api.php'
@@ -181,7 +180,7 @@ class c_server:
         try:
             response = requests.post(url, data=data, headers=headers)
             #response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
-
+            
             # Парсим строку, полученную от сервера
             active_status = c_server.decryptResponse(response.content)
             
@@ -209,7 +208,6 @@ class c_server:
         try:
             response = requests.post(url, data=data, headers=headers)
             #response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
-            result = ""
 
             if "000webhost.com" in response.text: # fix for free shit hosting
                 return False
